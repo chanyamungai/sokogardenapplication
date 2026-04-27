@@ -1,10 +1,15 @@
 package com.example.sokogarden
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.loopj.android.http.RequestParams
 
 class Signup : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -15,6 +20,68 @@ class Signup : AppCompatActivity() {
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
+        }
+        // find views
+        val username = findViewById<EditText>(R.id.username)
+        val email = findViewById<EditText>(R.id.email)
+        val password = findViewById<EditText>(R.id.password)
+        val phone = findViewById<EditText>(R.id.phone)
+        val signupButton = findViewById<Button>(R.id.signupbtn)
+        val signinTextView = findViewById<TextView>(R.id.signintxt)
+
+        // navigate to signin
+        signinTextView.setOnClickListener {
+            val intent = Intent(applicationContext, Signin::class.java)
+            startActivity(intent)
+        }
+
+        // signup button
+        signupButton.setOnClickListener {
+
+            // get values
+            val usernameText = username.text.toString().trim()
+            val emailText = email.text.toString().trim()
+            val passwordText = password.text.toString().trim()
+            val phoneText = phone.text.toString().trim()
+
+            // 🔴 validation
+            if (usernameText.isEmpty()) {
+                username.error = "Username is required"
+                username.requestFocus()
+                return@setOnClickListener
+            }
+
+            if (emailText.isEmpty()) {
+                email.error = "Email is required"
+                email.requestFocus()
+                return@setOnClickListener
+            }
+
+            if (passwordText.isEmpty()) {
+                password.error = "Password is required"
+                password.requestFocus()
+                return@setOnClickListener
+            }
+
+            if (phoneText.isEmpty()) {
+                phone.error = "Phone number is required"
+                phone.requestFocus()
+                return@setOnClickListener
+            }
+
+            // API
+            val api = "http://chanyamungai.alwaysdata.net/api/signup"
+
+            val data = RequestParams()
+            data.put("username", usernameText)
+            data.put("email", emailText)
+            data.put("password", passwordText)
+            data.put("phone", phoneText)
+
+            val helper = ApiHelper(applicationContext)
+
+            // 🔥 ONLY navigate after success
+            helper.post(api, data)
         }
     }
 }

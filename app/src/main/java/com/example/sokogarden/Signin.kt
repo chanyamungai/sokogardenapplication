@@ -1,10 +1,16 @@
 package com.example.sokogarden
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.loopj.android.http.RequestParams
 
 class Signin : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -15,6 +21,37 @@ class Signin : AppCompatActivity() {
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
+        }
+        //        find the two edit text ,button, and a text view by use of their ids
+        val email = findViewById<EditText>(R.id.email)
+        val password = findViewById<EditText>(R.id.password)
+        val signinButton = findViewById<Button>(R.id.signinbtn)
+        val signupTextView = findViewById<TextView>(R.id.signuptxt)
+
+//      On th text view set onclick listener such that when clicked it navigates u to the signup page
+        signupTextView.setOnClickListener {
+            val intent = Intent(applicationContext, Signup::class.java)
+            startActivity(intent)
+        }
+
+//        on click of the button sign in we need to interact without api endpoint as we pass the two data required ei email and password
+        signinButton.setOnClickListener {
+//            specify the api endpoint
+            val api ="http://chanyamungai.alwaysdata.net/api/signin"
+//            create a request that run that enable us to hold the data inform of a bundle/package
+            val data = RequestParams()
+
+//            add/append/attach the email and the password
+            data.put("email", email.text.toString())
+            data.put("password",password.text.toString())
+
+//            import the api helper
+            val helper = ApiHelper(applicationContext)
+
+//            by use of the function post_login the helper class post your data
+            // 🔥 ONLY navigate after success
+            helper.post(api, data)
+
         }
     }
 }
